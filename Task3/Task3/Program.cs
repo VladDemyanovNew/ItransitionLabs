@@ -7,14 +7,14 @@ namespace Task3
     {
         static void Main(string[] args)
         {
-            GameRulesValidator gameRules = new GameRulesValidator(args);
-            gameRules.ValidateArgs();
+            SecureRandom secureRandom = new SecureRandom();
+            GameRulesValidator.ValidateArgs(args); // Validation of the input args
 
             while (true)
             {
-                byte[] HMACKey = KeyGenerator.GenerateHMACKey();
-                int computerMove = 3;
-                byte[] HMAC = KeyGenerator.GenerateHMACSHA256(HMACKey, BitConverter.GetBytes(computerMove));
+                byte[] HMACKey = KeyGenerator.GenerateHMACKey(); // Generation of random key
+                int computerMove = secureRandom.Next(args.Length); // Random computer motion generation  BitConverter.GetBytes(computerMove)
+                byte[] HMAC = KeyGenerator.GenerateHMACSHA256(HMACKey, Encoding.UTF8.GetBytes(args[computerMove - 1])); // Calculating HMAC from action with the generation key
                 
                 Console.WriteLine("HMAC: " + KeyGenerator.CreateStrFromByteArr(HMAC));
                 GameInterface.PrintMenu(args);
@@ -23,16 +23,15 @@ namespace Task3
                 do
                 {
                     Console.Write("Enter your move: ");
-                    playerMove = gameRules.ValidatePlayerMove(Console.ReadLine());
+                    playerMove = GameRulesValidator.ValidatePlayerMove(Console.ReadLine(), args);
                 } while (playerMove == -1);
-                
 
                 Console.WriteLine("Your move: " + args[playerMove - 1]);
                 Console.WriteLine("Computer move: " + args[computerMove - 1]);
-                Console.WriteLine(gameRules.DetermineWinner(playerMove, computerMove));
+                int winner = GameRulesValidator.DetermineWinner(playerMove, computerMove, args);
+                Console.WriteLine(winner == 1 ? "You win :)": winner == -1 ? "Computer win :(" : "Draw :/");
                 Console.WriteLine("HMAC key: " + KeyGenerator.CreateStrFromByteArr(HMACKey));
-
-                break;
+                Console.WriteLine();
             }
         }
     }
