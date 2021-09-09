@@ -14,7 +14,6 @@ namespace Task3
             {
                 byte[] HMACKey = KeyGenerator.GenerateHMACKey(); // Generation of random key
                 int computerMove = secureRandom.Next(1, args.Length); // Random computer motion generation  BitConverter.GetBytes(computerMove)
-                Console.WriteLine(computerMove);
                 byte[] HMAC = KeyGenerator.GenerateHMACSHA256(HMACKey, Encoding.UTF8.GetBytes(args[computerMove - 1])); // Calculating HMAC from action with the generation key
                 
                 Console.WriteLine("HMAC: " + KeyGenerator.CreateStrFromByteArr(HMAC));
