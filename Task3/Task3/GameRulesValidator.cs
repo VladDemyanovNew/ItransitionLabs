@@ -91,7 +91,7 @@ namespace Task3
             int result;
             bool check = int.TryParse(move, out result);
 
-            if (check)
+            if (check && result >= 0 && result <= args.Length)
             {
                 if (result == 0)
                     Environment.Exit(0);
