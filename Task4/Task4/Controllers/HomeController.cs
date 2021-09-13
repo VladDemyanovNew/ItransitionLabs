@@ -28,13 +28,13 @@ namespace Task4.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetSocialNetworksInfo()
+        public JsonResult GetSocialNetworks()
         {
-            List<SocialNetwrok> users = _applicationDbContext.UserLogins
+            List<SocialNetwrok> socialNetworks = _applicationDbContext.UserLogins
                                         .GroupBy(user => user.ProviderDisplayName)
                                         .Select(item => new SocialNetwrok { ProviderDisplayName = item.Key, UserCount = item.Count() })
                                         .ToList();
-            return Json(users);
+            return Json(socialNetworks);
         }
 
         public IActionResult Privacy()
