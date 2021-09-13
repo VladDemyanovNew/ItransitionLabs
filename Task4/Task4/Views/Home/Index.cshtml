@@ -1,0 +1,23 @@
+﻿@{
+    
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row justify-content-center">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-header">
+                Общее число пользователей сайта из каждой соцсети
+            </div>
+            <div class="card-body">
+                <canvas class="my-4 h-25" id="pie"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    fetch("home/getsocialnetworksinfo")
+        .then(response => response.json())
+        .then(json => createSocialNetworkChart(json));
+</script>
