@@ -30,9 +30,9 @@ namespace Task4.Controllers
         [HttpGet]
         public JsonResult GetSocialNetworks()
         {
-            List<SocialNetwrok> socialNetworks = _applicationDbContext.UserLogins
+            List<SocialNetwork> socialNetworks = _applicationDbContext.UserLogins
                                         .GroupBy(user => user.ProviderDisplayName)
-                                        .Select(item => new SocialNetwrok { ProviderDisplayName = item.Key, UserCount = item.Count() })
+                                        .Select(item => new SocialNetwork { ProviderDisplayName = item.Key, UserCount = item.Count() })
                                         .ToList();
             return Json(socialNetworks);
         }

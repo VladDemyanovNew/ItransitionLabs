@@ -40,6 +40,10 @@ namespace Task4
             {
                 facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
                 facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            }).AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = Configuration["Authentication:Google:AppId"];
+                googleOptions.ClientSecret = Configuration["Authentication:Google:AppSecret"];
             });
         }
 

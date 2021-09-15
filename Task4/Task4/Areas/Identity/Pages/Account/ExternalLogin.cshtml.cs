@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Task4.Data;
 
 namespace Task4.Areas.Identity.Pages.Account
 {
@@ -23,17 +24,20 @@ namespace Task4.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private ApplicationDbContext _applicationDbContext;
 
         public ExternalLoginModel(
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext applicationDb)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _emailSender = emailSender;
+            _applicationDbContext = applicationDb;
         }
 
         [BindProperty]
@@ -126,6 +130,8 @@ namespace Task4.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
+                    _applicationDbContext.CreateUserAuthDate(user.Id, DateTime.Now);
+                    await _applicationDbContext.UpdateLoginDate(user.Id, DateTime.Now);
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
@@ -147,6 +153,10 @@ namespace Task4.Areas.Identity.Pages.Account
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
                             return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
+                        }
+                        else
+                        {
+                            await _applicationDbContext.UpdateLoginDate(user.Id, DateTime.Now);
                         }
 
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);

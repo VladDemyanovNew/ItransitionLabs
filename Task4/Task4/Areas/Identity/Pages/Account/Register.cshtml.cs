@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Task4.Data;
 
 namespace Task4.Areas.Identity.Pages.Account
 {
@@ -23,17 +24,20 @@ namespace Task4.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private ApplicationDbContext _applicationDbContext;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext applicationDb)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _applicationDbContext = applicationDb;
         }
 
         [BindProperty]
@@ -79,6 +83,8 @@ namespace Task4.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    _applicationDbContext.CreateUserAuthDate(user.Id, DateTime.Now);
+                    await _applicationDbContext.UpdateLoginDate(user.Id, DateTime.Now);
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -98,6 +104,7 @@ namespace Task4.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _applicationDbContext.UpdateLoginDate(user.Id, DateTime.Now);
                         return LocalRedirect(returnUrl);
                     }
                 }

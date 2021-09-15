@@ -1,0 +1,54 @@
+﻿@model List<User>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<script>
+    function SelectAll() {
+        Array.from(document.querySelectorAll("input[type='checkbox']"))
+            .forEach(elem => elem.checked = document.getElementById('maincheckbox').checked);
+    }
+</script>
+
+<div class="text-center">
+    <div class="py-3 d-flex justify-content-md-start">
+        <form id="mainform" method="post">
+            <button asp-controller="Users" asp-action="Block" type="submit" class="btn btn-primary">Block</button>
+            <button asp-controller="Users" asp-action="Unblock" type="submit" class="btn btn-primary">Unblock</button>
+            <button asp-controller="Users" asp-action="Delete" type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr class="text-center">
+                <th scope="col">
+                    <input type="checkbox" id="maincheckbox" onclick="SelectAll()">
+                </th>
+                <th scope="col">Id</th>
+                <th scope="col">Email</th>
+                <th scope="col">Social network</th>
+                <th scope="col">Registration date</th>
+                <th scope="col">Last login date</th>
+                <th scope="col">Blocked</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td><input type="checkbox" id="@user.Id" form="mainform" value="@user.Id" name="selectedUsers"></td>
+                    <td>@user.Id</td>
+                    <td>@user.Email</td>
+                    <td>@user.ProviderDisplayName</td>
+                    <td>@String.Format("{0:G}", user.RegistrationDate)</td>
+                    <td>@String.Format("{0:G}", user.LastLoginDate)</td>
+                    <td>@user.IsBlocked</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

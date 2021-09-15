@@ -15,9 +15,9 @@ namespace Task4.Areas.Identity
         public void Configure(IWebHostBuilder builder)
         {
             builder.ConfigureServices((context, services) => {
-                services.AddDbContext<Task4Context>(options =>
+                /*services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(
-                        context.Configuration.GetConnectionString("Task4ContextConnection")));
+                        context.Configuration.GetConnectionString("Task4ContextConnection")));*/
 
                 /*services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                     .AddEntityFrameworkStores<Task4Context>();*/
