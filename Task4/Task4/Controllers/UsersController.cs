@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,22 +27,54 @@ namespace Task4.Controllers
 
         [Route("")]
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(string socialNetwork, string status, SortState sortOrder = SortState.IdAsc)
         {
-            List<User> users = (from u in _applicationDbContext.Users
-                                join d in _applicationDbContext.UserAuthDates on u.Id equals d.Id
-                                join f in _applicationDbContext.UserLogins on u.Id equals f.UserId
-                                select
-                                new User
-                                {
-                                    Id = u.Id,
-                                    Email = u.Email,
-                                    IsBlocked = u.LockoutEnd != null,
-                                    LastLoginDate = d.LastLoginDate,
-                                    RegistrationDate = d.RegistrationDate,
-                                    ProviderDisplayName = f.ProviderDisplayName
-                                }).ToList();
-            return View(users);
+            List<User> users = _applicationDbContext.GetConfigUsers();
+
+            FilterViewModel filterViewModel = Filter(ref users, socialNetwork, null);
+            SortViewModel sortViewModel = Sort(ref users, sortOrder);
+
+            IndexViewModel viewModel = new IndexViewModel
+            {
+                SortViewModel = sortViewModel,
+                FilterViewModel = filterViewModel,
+                Users = users
+            };
+
+            return View(viewModel);
+        }
+
+        private SortViewModel Sort(ref List<User> users, SortState sortOrder)
+        {
+            users = (sortOrder switch
+            {
+                SortState.IdDesc => users.OrderByDescending(s => s.Id),
+                SortState.EmailAsc => users.OrderBy(s => s.Email),
+                SortState.EmailDesc => users.OrderByDescending(s => s.Email),
+                SortState.SocialNetworkAsc => users.OrderBy(s => s.ProviderDisplayName),
+                SortState.SocialNetworkDesc => users.OrderByDescending(s => s.ProviderDisplayName),
+
+                SortState.RegDateAsc => users.OrderBy(s => s.RegistrationDate),
+                SortState.RegDateDesc => users.OrderByDescending(s => s.RegistrationDate),
+
+                SortState.LoginDateAsc => users.OrderBy(s => s.LastLoginDate),
+                SortState.LoginDateDesc => users.OrderByDescending(s => s.LastLoginDate),
+
+                SortState.BlockedAsc => users.OrderBy(s => s.IsBlocked),
+                SortState.BlockedDesc => users.OrderByDescending(s => s.IsBlocked),
+                _ => users.OrderBy(s => s.Id),
+            }).ToList();
+            return new SortViewModel(sortOrder);
+        }
+
+        private FilterViewModel Filter(ref List<User> users, string socialNetwork, string status)
+        {
+            if (!String.IsNullOrEmpty(socialNetwork) && socialNetwork != "All")
+                users = users.Where(user => user.ProviderDisplayName == socialNetwork).ToList();
+
+            List<string> socialNetworks = _applicationDbContext.UserLogins.Select(u => u.ProviderDisplayName).Distinct().ToList();
+
+            return new FilterViewModel(socialNetworks, socialNetwork);
         }
 
         [HttpPost("Delete")]

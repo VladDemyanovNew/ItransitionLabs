@@ -38,5 +38,23 @@ namespace Task4.Data
             UserAuthDates.Remove(dateUser);
             SaveChanges();
         }
+
+        public List<User> GetConfigUsers()
+        {
+            List<User> users = (from u in Users
+                                join d in UserAuthDates on u.Id equals d.Id
+                                join f in UserLogins on u.Id equals f.UserId
+                                select
+                                new User
+                                {
+                                    Id = u.Id,
+                                    Email = u.Email,
+                                    IsBlocked = u.LockoutEnd != null,
+                                    LastLoginDate = d.LastLoginDate,
+                                    RegistrationDate = d.RegistrationDate,
+                                    ProviderDisplayName = f.ProviderDisplayName
+                                }).ToList();
+            return users;
+        }
     }
 }
