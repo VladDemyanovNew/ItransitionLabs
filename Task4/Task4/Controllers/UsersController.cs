@@ -31,7 +31,7 @@ namespace Task4.Controllers
         {
             List<User> users = _applicationDbContext.GetConfigUsers();
 
-            FilterViewModel filterViewModel = Filter(ref users, socialNetwork, null);
+            FilterViewModel filterViewModel = Filter(ref users, socialNetwork, status);
             SortViewModel sortViewModel = Sort(ref users, sortOrder);
 
             IndexViewModel viewModel = new IndexViewModel
@@ -72,9 +72,12 @@ namespace Task4.Controllers
             if (!String.IsNullOrEmpty(socialNetwork) && socialNetwork != "All")
                 users = users.Where(user => user.ProviderDisplayName == socialNetwork).ToList();
 
+            if (!String.IsNullOrEmpty(status) && status != "All")
+                users = users.Where(user => user.IsBlocked.ToString() == status).ToList();
+
             List<string> socialNetworks = _applicationDbContext.UserLogins.Select(u => u.ProviderDisplayName).Distinct().ToList();
 
-            return new FilterViewModel(socialNetworks, socialNetwork);
+            return new FilterViewModel(socialNetworks, socialNetwork, status);
         }
 
         [HttpPost("Delete")]
@@ -108,7 +111,8 @@ namespace Task4.Controllers
                     if (_userManager.GetUserId(HttpContext.User) != userId)
                         return Redirect("/Identity/Account/Login");
 
-                    blockedUser.LockoutEnd = DateTime.MaxValue;
+                    //blockedUser.LockoutEnd = DateTime.MaxValue;
+                    blockedUser.LockoutEnd = DateTime.Now.AddYears(100);
                     await _userManager.UpdateSecurityStampAsync(blockedUser);
                     await _userManager.UpdateAsync(blockedUser);
                     await _signInManager.SignOutAsync();

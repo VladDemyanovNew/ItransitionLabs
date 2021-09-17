@@ -44,6 +44,10 @@ namespace Task4
             {
                 googleOptions.ClientId = Configuration["Authentication:Google:AppId"];
                 googleOptions.ClientSecret = Configuration["Authentication:Google:AppSecret"];
+            }).AddMicrosoftAccount(microsoftOptions =>
+            {
+                microsoftOptions.ClientId = Configuration["Authentication:Microsoft:AppId"];
+                microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:AppSecret"];
             });
         }
 

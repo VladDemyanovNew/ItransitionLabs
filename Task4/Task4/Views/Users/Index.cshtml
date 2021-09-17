@@ -12,6 +12,17 @@
     }
 </script>
 
+<style>
+    .margin-right {
+        margin-right: 10px;
+    }
+
+    a {
+        text-decoration: none;
+        color: black;
+    }
+</style>
+
 <div class="text-center">
     <div class="py-3 d-flex justify-content-between">
         <form id="mainform" method="post">
@@ -21,16 +32,16 @@
         </form>
         <form method="get">
             <div class="form-inline form-group">
-                <label class="control-label">Social networks: </label>
-                <select name="socialNetwork" asp-items="Model.FilterViewModel.SocialNetworks" class="form-control"></select>
-                <label class="control-label">Statuses: </label>
-                <select name="status" asp-items="null" class="form-control"></select>
-                <input type="submit" value="Filter" class="btn btn-default" />
+                <label class="control-label margin-right">Social networks: </label>
+                <select name="socialNetwork" asp-items="Model.FilterViewModel.SocialNetworks" class="form-control margin-right"></select>
+                <label class="control-label margin-right">Statuses: </label>
+                <select name="status" asp-items="Model.FilterViewModel.Statuses" class="form-control margin-right"></select>
+                <input type="submit" value="Filter" class="btn btn-outline-dark" />
             </div>
         </form>
     </div>
 
-    <table class="table table-responsive table-striped">
+    <table class="table table-responsive table-striped table-hover">
         <thead>
             <tr class="text-center">
                 <th scope="col">
@@ -39,32 +50,39 @@
                 <th scope="col">
                     <a asp-action="Index"
                        asp-route-sortOrder="@(Model.SortViewModel.IdSort)"
-                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)">Id</a>
+                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)"
+                       asp-route-statuses="@(Model.FilterViewModel.SelectedStatus)"
+                       class="">Id</a>
                 </th>
                 <th scope="col">
                     <a asp-action="Index"
                        asp-route-sortOrder="@(Model.SortViewModel.EmailSort)"
-                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)">Email</a>
+                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)"
+                       asp-route-statuses="@(Model.FilterViewModel.SelectedStatus)">Email</a>
                 </th>
                 <th scope="col">
                     <a asp-action="Index"
                        asp-route-sortOrder="@(Model.SortViewModel.SocialNetworkSort)"
-                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)">Social network</a>
+                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)"
+                       asp-route-statuses="@(Model.FilterViewModel.SelectedStatus)">Social network</a>
                 </th>
                 <th scope="col">
                     <a asp-action="Index"
                        asp-route-sortOrder="@(Model.SortViewModel.RegDateSort)"
-                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)">Registration date</a>
+                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)"
+                       asp-route-statuses="@(Model.FilterViewModel.SelectedStatus)">Registration date</a>
                 </th>
                 <th scope="col">
                     <a asp-action="Index"
                        asp-route-sortOrder="@(Model.SortViewModel.LoginDateSort)"
-                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)">Last login date</a>
+                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)"
+                       asp-route-statuses="@(Model.FilterViewModel.SelectedStatus)">Last login date</a>
                 </th>
                 <th scope="col">
                     <a asp-action="Index"
                        asp-route-sortOrder="@(Model.SortViewModel.BlockedSort)"
-                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)">Blocked</a>
+                       asp-route-socialNetwork="@(Model.FilterViewModel.SelectedSocialNetwork)"
+                       asp-route-statuses="@(Model.FilterViewModel.SelectedStatus)">Blocked</a>
                 </th>
             </tr>
         </thead>
